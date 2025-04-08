@@ -16,10 +16,42 @@
   <div class="chat-box">
     <h3>Chat</h3>
     <div class="chat-content">
-      <div class="message" *ngFor="let message of messages">
-        {{ message }}
+      <!-- Loop through messages -->
+      <div class="message-container" *ngFor="let message of messages">
+        <div class="message-bubble" [ngSwitch]="message.type">
+          
+          <!-- Text Message -->
+          <div *ngSwitchCase="'text'">
+            {{ message.content }}
+          </div>
+    
+          <!-- File Message (Images, PDFs, etc.) -->
+          <div *ngSwitchCase="'file'">
+            <div *ngIf="message.fileType === 'image'">
+              <img [src]="message.fileUrl" alt="{{ message.content }}" style="max-width: 100%;">
+              <br>{{ message.content }}
+            </div>
+            <div *ngIf="message.fileType === 'pdf'">
+              <a [href]="message.fileUrl" target="_blank">{{ message.content }}</a>
+            </div>
+            <div *ngIf="message.fileType !== 'image' && message.fileType !== 'pdf'">
+              File: {{ message.content }}
+            </div>
+          </div>
+          
+          <!-- Interactive Message with Yes/No Buttons -->
+          <div *ngSwitchCase="'interactive'" class="interactive-message">
+            {{ message.content }}
+            <div class="button-container">
+              <button (click)="handleInteractiveResponse(true)">Yes</button>
+              <button (click)="handleInteractiveResponse(false)">No</button>
+            </div>
+          </div>
+          
+        </div>
       </div>
     </div>
+    
     <div class="chat-controls">
       <input type="text"
              [(ngModel)]="chatInput"

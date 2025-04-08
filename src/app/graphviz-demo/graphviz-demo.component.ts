@@ -2,6 +2,13 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { graphviz } from 'd3-graphviz';
 import * as d3 from 'd3';
 
+interface ChatMessage {
+  type: 'text' | 'file' | 'interactive';
+  content: string;
+  fileType?: string; // 'image', 'pdf', or 'other'
+  fileUrl?: string;
+}
+
 @Component({
   selector: 'app-graphviz-demo',
   templateUrl: './graphviz-demo.component.html',
@@ -21,7 +28,7 @@ export class GraphvizDemoComponent implements OnInit {
 
   // Chat box properties
   chatInput: string = '';
-  messages: string[] = [];
+  messages: ChatMessage[] = [];
 
   constructor(private zone: NgZone) {}
 
@@ -32,13 +39,13 @@ export class GraphvizDemoComponent implements OnInit {
         `
         digraph {
           node [shape=box, style=filled, color=lightblue];
-          "LT-101" [label=<<u>Level Transmitter</u>>]
-          "PRV-101" [label=<<u>Pressure Relief Valve</u>>]
-          "T-101" [label=<<u>Inlet Flow Outlet Flow</u>>]
-          "PLC-101" [label=<<u>Control Panel</u>>]
-          "LT-101" -> "PRV-101" [label="Pressure Level"]
-          "PRV-101" -> "T-101" [label="Water Tank"]
-          "T-101" -> "PLC-101" [label=""]
+          "LT-101" [label=<<u>Level Transmitter</u>>];
+          "PRV-101" [label=<<u>Pressure Relief Valve</u>>];
+          "T-101" [label=<<u>Inlet Flow Outlet Flow</u>>];
+          "PLC-101" [label=<<u>Control Panel</u>>];
+          "LT-101" -> "PRV-101" [label="Pressure Level"];
+          "PRV-101" -> "T-101" [label="Water Tank"];
+          "T-101" -> "PLC-101" [label="Control Panel"];
         }
       `
       )
@@ -86,7 +93,7 @@ export class GraphvizDemoComponent implements OnInit {
   // Send a chat message on Enter key
   sendMessage() {
     if (this.chatInput.trim()) {
-      this.messages.push(this.chatInput.trim());
+      this.messages.push({ type: 'text', content: this.chatInput.trim() });
       this.chatInput = '';
     }
   }
@@ -95,9 +102,27 @@ export class GraphvizDemoComponent implements OnInit {
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
-      // For demonstration, add the file name as a chat message
-      this.messages.push(`File uploaded: ${file.name}`);
-      // Optionally, you could implement further logic to read/process the file.
+      // Create a temporary URL so we can preview the file
+      const fileUrl = URL.createObjectURL(file);
+      if (file.type.startsWith('image/')) {
+        this.messages.push({ type: 'file', content: file.name, fileType: 'image', fileUrl });
+      } else if (file.type === 'application/pdf') {
+        this.messages.push({ type: 'file', content: file.name, fileType: 'pdf', fileUrl });
+        // Add interactive message for PDF files asking "Do you want to continue?"
+        this.messages.push({ type: 'interactive', content: 'Do you want to continue?' });
+      } else {
+        this.messages.push({ type: 'file', content: file.name, fileType: 'other' });
+      }
     }
+  }
+
+  // Handle interactive response from Yes/No buttons
+  handleInteractiveResponse(answer: boolean) {
+    // Here you can add additional logic based on the user's response.
+    // For demo purposes, we'll add a text message reflecting the user's answer.
+    const responseText = answer ? 'User chose YES.' : 'User chose NO.';
+    this.messages.push({ type: 'text', content: responseText });
+    // Optionally, remove the interactive message from the chat.
+    // For simplicity, we leave it in the chat.
   }
 }

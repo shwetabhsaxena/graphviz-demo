@@ -38,24 +38,46 @@ h1 {
   margin: 0 0 10px 0;
 }
 
+/* Chat content (with scroll bar hidden) */
 .chat-content {
   flex: 1;
-  overflow-y: auto; 
+  overflow-y: auto;
   border: 1px solid #eee;
   padding: 5px;
   margin-bottom: 10px;
-  -ms-overflow-style: none;  
-  scrollbar-width: none;  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-
 .chat-content::-webkit-scrollbar {
   display: none !important;
 }
 
-.chat-content .message {
-  margin-bottom: 5px;
-  padding: 5px;
-  border-bottom: 1px solid #ddd;
+.message-container {
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.message-bubble {
+  background-color: #f5f5f5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+/* Style for the interactive message buttons */
+.interactive-message {
+  display: flex;
+  flex-direction: column;
+}
+.button-container {
+  margin-top: 5px;
+  display: flex;
+  gap: 10px;
+}
+.button-container button {
+  padding: 5px 10px;
+  cursor: pointer;
 }
 
 /* Chat controls (text input and file uploader) */
