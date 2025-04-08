@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "graphviz-demo:build:production"
+              "buildTarget": "graphviz-demo:build:production"
             },
             "development": {
-              "browserTarget": "graphviz-demo:build:development"
+              "buildTarget": "graphviz-demo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -76,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "graphviz-demo:build"
+            "buildTarget": "graphviz-demo:build"
           }
         },
         "test": {
